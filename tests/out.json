@@ -1,0 +1,29 @@
+{
+  "objects": [
+    "Sprite",
+    "Sprite2"
+  ],
+  "layouts": {
+    "Layout 1": {
+      "Layer 0": {
+        "Sprite": {
+          "x": 213,
+          "y": 209,
+          "id": 0
+        },
+        "Sprite2": {
+          "x": 265,
+          "y": 307,
+          "id": 1
+        }
+      },
+      "Layer 1": {
+        "Sprite2": {
+          "x": 679,
+          "y": 253,
+          "id": 1
+        }
+      }
+    }
+  }
+}
