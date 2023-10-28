@@ -130,4 +130,4 @@ this._baseUrl,{name:"JobWorker"+number});const dispatchChannel=new MessageChanne
 "outputPort":this._outputPort,"maxNumWorkers":this._maxNumWorkers}}GetPortTransferables(){return[this._inputPort,this._outputPort]}}};
 
 
-'use strict';{if(window["C3_IsSupported"]){const enableWorker=false;window["c3_runtimeInterface"]=new self.RuntimeInterface({useWorker:enableWorker,workerMainUrl:"workermain.js",engineScripts:["scripts/c3runtime.js"],projectScripts:[["scripts/project/main.js"]],mainProjectScript:"scripts/project/main.js",scriptFolder:"scripts/",workerDependencyScripts:[],exportType:"html5"})}};
+'use strict';{if(window["C3_IsSupported"]){const enableWorker=false;window["c3_runtimeInterface"]=new self.RuntimeInterface({useWorker:enableWorker,workerMainUrl:"workermain.js",engineScripts:["scripts/c3runtime.js"],projectScripts:[],mainProjectScript:"",scriptFolder:"scripts/",workerDependencyScripts:[],exportType:"html5"})}};

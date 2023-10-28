@@ -1,0 +1,540 @@
+{
+	"name": "Event sheet 1",
+	"events": [
+		{
+			"eventType": "variable",
+			"name": "Score",
+			"type": "number",
+			"initialValue": "0",
+			"comment": "",
+			"isStatic": false,
+			"isConstant": false,
+			"sid": 980117212011315
+		},
+		{
+			"eventType": "comment",
+			"text": "Every tick of execution (60 FPS = 60 times in a second) the actions are executed.\nHere we position the PlayerAnim object to the object PlayerBox's position.\nWe also have our txtScore object displaying the value of the Score global variable."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "every-tick",
+					"objectClass": "System",
+					"sid": 512160503003334
+				}
+			],
+			"actions": [
+				{
+					"id": "set-position-to-another-object",
+					"objectClass": "PlayerAnim",
+					"sid": 324150565208550,
+					"parameters": {
+						"object": "PlayerBox",
+						"image-point-optional": "0"
+					}
+				},
+				{
+					"id": "set-text",
+					"objectClass": "txtScore",
+					"sid": 285804474817782,
+					"parameters": {
+						"text": "\"Score: \" & Score"
+					}
+				}
+			],
+			"sid": 374483578434910
+		},
+		{
+			"eventType": "comment",
+			"text": "When pressing the left or right key of the keyboard, we mirror (or not) the PlayerAnim object in order to have the animation facing the correct direction."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-key-pressed",
+					"objectClass": "Keyboard",
+					"sid": 396288624941579,
+					"parameters": {
+						"key": 37
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "set-mirrored",
+					"objectClass": "PlayerAnim",
+					"sid": 708106913312560,
+					"parameters": {
+						"state": "mirrored"
+					}
+				}
+			],
+			"sid": 499560903284314
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-key-pressed",
+					"objectClass": "Keyboard",
+					"sid": 712454748487989,
+					"parameters": {
+						"key": 39
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "set-mirrored",
+					"objectClass": "PlayerAnim",
+					"sid": 981891865102474,
+					"parameters": {
+						"state": "not-mirrored"
+					}
+				}
+			],
+			"sid": 671266219476357
+		},
+		{
+			"eventType": "comment",
+			"text": "Some events in relation with the state of the Platform behavior, setting the appropriate animation in the PlayerAnim object."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-moved",
+					"objectClass": "PlayerBox",
+					"sid": 776629153376850,
+					"behaviorType": "Platform"
+				}
+			],
+			"actions": [
+				{
+					"id": "set-animation",
+					"objectClass": "PlayerAnim",
+					"sid": 240285429529216,
+					"parameters": {
+						"animation": "\"walk\"",
+						"from": "beginning"
+					}
+				}
+			],
+			"sid": 836680780534509
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-stopped",
+					"objectClass": "PlayerBox",
+					"sid": 413829699675466,
+					"behaviorType": "Platform"
+				}
+			],
+			"actions": [
+				{
+					"id": "set-animation",
+					"objectClass": "PlayerAnim",
+					"sid": 846711115085472,
+					"parameters": {
+						"animation": "\"idle\"",
+						"from": "beginning"
+					}
+				}
+			],
+			"sid": 373607622288434
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-jump",
+					"objectClass": "PlayerBox",
+					"sid": 854025311026868,
+					"behaviorType": "Platform"
+				}
+			],
+			"actions": [
+				{
+					"id": "set-animation",
+					"objectClass": "PlayerAnim",
+					"sid": 346295693928223,
+					"parameters": {
+						"animation": "\"jump\"",
+						"from": "beginning"
+					}
+				}
+			],
+			"sid": 635852805822103
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-fall",
+					"objectClass": "PlayerBox",
+					"sid": 852804347174079,
+					"behaviorType": "Platform"
+				}
+			],
+			"actions": [
+				{
+					"id": "set-animation",
+					"objectClass": "PlayerAnim",
+					"sid": 446165360976414,
+					"parameters": {
+						"animation": "\"fall\"",
+						"from": "beginning"
+					}
+				}
+			],
+			"sid": 459857989962246
+		},
+		{
+			"eventType": "comment",
+			"text": "When the Platform behavior lands..."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-landed",
+					"objectClass": "PlayerBox",
+					"sid": 219123418393679,
+					"behaviorType": "Platform"
+				}
+			],
+			"actions": [],
+			"sid": 138076402349626,
+			"children": [
+				{
+					"eventType": "comment",
+					"text": "...play the [i]walk[/i] animation if the behavior is in moving state"
+				},
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "is-moving",
+							"objectClass": "PlayerBox",
+							"sid": 890303801304219,
+							"behaviorType": "Platform"
+						}
+					],
+					"actions": [
+						{
+							"id": "set-animation",
+							"objectClass": "PlayerAnim",
+							"sid": 903106399296044,
+							"parameters": {
+								"animation": "\"walk\"",
+								"from": "beginning"
+							}
+						}
+					],
+					"sid": 118674294163541
+				},
+				{
+					"eventType": "comment",
+					"text": "...play the [i]idle[/i] animation if the behavior is not in moving state"
+				},
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "is-moving",
+							"objectClass": "PlayerBox",
+							"sid": 753104754550666,
+							"behaviorType": "Platform",
+							"isInverted": true
+						}
+					],
+					"actions": [
+						{
+							"id": "set-animation",
+							"objectClass": "PlayerAnim",
+							"sid": 928043718480594,
+							"parameters": {
+								"animation": "\"idle\"",
+								"from": "beginning"
+							}
+						}
+					],
+					"sid": 120246193263697
+				}
+			]
+		},
+		{
+			"eventType": "comment",
+			"text": "When the PlayerBox collides with an Enemy..."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-collision-with-another-object",
+					"objectClass": "PlayerBox",
+					"sid": 157813021956958,
+					"parameters": {
+						"object": "Enemy"
+					}
+				}
+			],
+			"actions": [],
+			"sid": 457042732883086,
+			"children": [
+				{
+					"eventType": "comment",
+					"text": "The Platform behavior is in falling state and the PlayerBox Y position is currently less (above) the Enemy Y position -> Destroy the Enemy and bounce PlayerBox up"
+				},
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "is-falling",
+							"objectClass": "PlayerBox",
+							"sid": 841617489273598,
+							"behaviorType": "Platform"
+						},
+						{
+							"id": "compare-y",
+							"objectClass": "PlayerBox",
+							"sid": 237705479138207,
+							"parameters": {
+								"comparison": 2,
+								"y-co-ordinate": "Enemy.Y"
+							}
+						}
+					],
+					"actions": [
+						{
+							"id": "destroy",
+							"objectClass": "Enemy",
+							"sid": 203208703086651
+						},
+						{
+							"id": "set-vector-y",
+							"objectClass": "PlayerBox",
+							"sid": 683442128722641,
+							"behaviorType": "Platform",
+							"parameters": {
+								"vector-y": "-550"
+							}
+						}
+					],
+					"sid": 180050629695523
+				},
+				{
+					"eventType": "comment",
+					"text": "Otherwise, have the PlayerAnim flash for a second. This could be here that you handle health management for your player if you want to add it to your game"
+				},
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "else",
+							"objectClass": "System",
+							"sid": 353796850297447
+						}
+					],
+					"actions": [
+						{
+							"id": "flash",
+							"objectClass": "PlayerAnim",
+							"sid": 218047869248710,
+							"behaviorType": "Flash",
+							"parameters": {
+								"on-time": "0.1",
+								"off-time": "0.1",
+								"duration": "1.0"
+							}
+						}
+					],
+					"sid": 703831543564275
+				}
+			]
+		},
+		{
+			"eventType": "comment",
+			"text": "According to the value of the instance variable [i]Action[/i] in the Enemy object, we simulate controls in order to move the Enemy either to the left or to the right.\nThis is a kind of AI for your enemies."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "compare-instance-variable",
+					"objectClass": "Enemy",
+					"sid": 452930496962237,
+					"parameters": {
+						"instance-variable": "Action",
+						"comparison": 0,
+						"value": "\"left\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "simulate-control",
+					"objectClass": "Enemy",
+					"sid": 649782179648900,
+					"behaviorType": "Platform",
+					"parameters": {
+						"control": "left"
+					}
+				},
+				{
+					"id": "set-mirrored",
+					"objectClass": "Enemy",
+					"sid": 882826473433195,
+					"parameters": {
+						"state": "mirrored"
+					}
+				}
+			],
+			"sid": 393855247503879
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "compare-instance-variable",
+					"objectClass": "Enemy",
+					"sid": 386795760342918,
+					"parameters": {
+						"instance-variable": "Action",
+						"comparison": 0,
+						"value": "\"right\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "simulate-control",
+					"objectClass": "Enemy",
+					"sid": 121083313129875,
+					"behaviorType": "Platform",
+					"parameters": {
+						"control": "right"
+					}
+				},
+				{
+					"id": "set-mirrored",
+					"objectClass": "Enemy",
+					"sid": 287545612285102,
+					"parameters": {
+						"state": "not-mirrored"
+					}
+				}
+			],
+			"sid": 276717407744606
+		},
+		{
+			"eventType": "comment",
+			"text": "When an Enemy collides with an EdgeMarker, change its direction (the value of the [i]Action[/i] instance variable) accordingly."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-collision-with-another-object",
+					"objectClass": "Enemy",
+					"sid": 600752770646525,
+					"parameters": {
+						"object": "EdgeMarker"
+					}
+				}
+			],
+			"actions": [],
+			"sid": 101630144558320,
+			"children": [
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "compare-instance-variable",
+							"objectClass": "Enemy",
+							"sid": 403064443888661,
+							"parameters": {
+								"instance-variable": "Action",
+								"comparison": 0,
+								"value": "\"right\""
+							}
+						}
+					],
+					"actions": [
+						{
+							"id": "set-instvar-value",
+							"objectClass": "Enemy",
+							"sid": 408867315913244,
+							"parameters": {
+								"instance-variable": "Action",
+								"value": "\"left\""
+							}
+						}
+					],
+					"sid": 802680943607518
+				},
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "else",
+							"objectClass": "System",
+							"sid": 812628215226824
+						}
+					],
+					"actions": [
+						{
+							"id": "set-instvar-value",
+							"objectClass": "Enemy",
+							"sid": 511037416294281,
+							"parameters": {
+								"instance-variable": "Action",
+								"value": "\"right\""
+							}
+						}
+					],
+					"sid": 996987758035420
+				}
+			]
+		},
+		{
+			"eventType": "comment",
+			"text": "When PlayerBox collides with a Pickup, destroy it and add 10 points to the Score global variable."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-collision-with-another-object",
+					"objectClass": "PlayerBox",
+					"sid": 800267963340759,
+					"parameters": {
+						"object": "Pickup"
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "destroy",
+					"objectClass": "Pickup",
+					"sid": 751004690958053
+				},
+				{
+					"id": "add-to-eventvar",
+					"objectClass": "System",
+					"sid": 366259347197293,
+					"parameters": {
+						"variable": "Score",
+						"value": "10"
+					}
+				}
+			],
+			"sid": 616760049956994
+		}
+	],
+	"sid": 139311760672095
+}

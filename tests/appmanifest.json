@@ -1,6 +1,6 @@
 {
-	"name": "Testing Game",
-	"short_name": "Testing Game",
+	"name": "Platform abstraction",
+	"short_name": "Platform abstraction",
 	"description": "",
 	"start_url": "index.html",
 	"display": "fullscreen",
