@@ -3,11 +3,13 @@ const { BlockList } = require('net');
 
 let objects = [];
 let layouts = [];
+let vars = {};
 let layoutList = [];
 let code = {
   sheets: [],
 }
 let statements = [];
+let cmds = [];
 
 
 
@@ -26,14 +28,25 @@ module.exports = {
       statements[statementIndex] = statements[statementIndex].toString()
     }
 
+    console.log(`Found ${statements.length} statments`)
+
+
+    cmds = runtime.match(new RegExp(`${/self\.C3_GetObjectRefTable = function \(\) \{/.source}(.*${/\};/.source})`, 's'))[0];
+
+    cmds = cmds.slice("self.C3_GetObjectRefTable = function () {\n	return [\n".length, -5).trim()
+    cmds = cmds.split(",");
+    for (let cmd = 0; cmd < cmds.length; cmd++) {
+      cmds[cmd] = cmds[cmd].trim()
+
+    }
+
+    console.log(`Found ${cmds.length} commands`)
+
     let json = JSON.parse(fs.readFileSync(inFile).toString("utf8"))
     let game = { width: json["project"][10], height: json["project"][11] };
 
-    // console.log("Looking For Objects\nFound:")
-
     // 3 = objects/sprites?
     for (let index = 0; index < json["project"][3].length; index++) {
-      // console.log(json["project"][3][index][0]);
 
       objects[index] = {}
       objects[index]["name"] = json["project"][3][index][0];
@@ -50,13 +63,13 @@ module.exports = {
       }
 
     }
+    console.log(`Found ${objects.length} objects`)
+
     json["project"][3] = {}
 
-    // console.log("Looking For Layouts\nFound:")
 
     // 5 = layouts
     for (let index = 0; index < json["project"][5].length; index++) {
-      // console.log(json["project"][5][index][0]);
       layoutList[index] = json["project"][5][index][0];
 
       let layoutData = json["project"][5][index];
@@ -95,6 +108,8 @@ module.exports = {
       }
 
     }
+    console.log(`Found ${layouts.length} layouts`)
+
     json["project"][5] = {}
 
 
@@ -115,6 +130,8 @@ module.exports = {
       }
 
     }
+    console.log(`Found ${code["sheets"].length} eventSheets`)
+
     json["project"][6] = {}
 
 
@@ -134,12 +151,19 @@ module.exports = {
 
 function conditionalConvert(numVal) {
   switch (numVal) {
+    case 0:
+      return "equal"
+    case 1:
+      return "not-equal"
     case 2:
       return "less-than"
     case 3:
       return "less-than-or-equal"
     case 4:
       return "greater-than"
+    case 5:
+      return "greater-than-or-equal"
+
 
     default:
       return numVal
@@ -188,15 +212,6 @@ function handleBlock(sheetObject, codeObject) {
       let condtions = [];
 
       for (let conditionObject = 0; conditionObject < objectData[6].length; conditionObject++) {
-        /*if (objectData[6][conditionObject][0] == 4) {
-
-          condtions[conditionObject] = {
-            action: "on-key-pressed",
-            id: objectData[6][conditionObject][7],
-            key: objectData[6][conditionObject][9] ? objectData[6][conditionObject][9][0][1] : "null",
-          }
-        }
-        else */
 
         let obj = {
           name:
@@ -206,8 +221,12 @@ function handleBlock(sheetObject, codeObject) {
           obj = objects[objectData[6][conditionObject][0]]
         }
 
+        let action = cmds[objectData[6][conditionObject][1]]
+
+
+
         if (
-          objectData[6][conditionObject][1] == 6
+          action == "C3.Plugins.Sprite.Cnds.CompareInstanceVar"
         ) {
 
           condtions[conditionObject] = {
@@ -220,7 +239,20 @@ function handleBlock(sheetObject, codeObject) {
           }
         }
         else if (
-          objectData[6][conditionObject][1] == 20
+          action == "C3.Plugins.System.Cnds.CompareVar"
+        ) {
+
+
+          condtions[conditionObject] = {
+            action: "compare-event-variable",
+            id: objectData[6][conditionObject][7],
+            var: vars[objectData[6][conditionObject][9][0][1]],
+            comparison: conditionalConvert(objectData[6][conditionObject][9][1][1]),
+            value: statements[objectData[6][conditionObject][9][2][1][0]],
+          }
+        }
+        else if (
+          action == "C3.Plugins.Keyboard.Cnds.OnKey"
         ) {
 
           condtions[conditionObject] = {
@@ -231,9 +263,10 @@ function handleBlock(sheetObject, codeObject) {
           }
         }
 
-        else {
+        if (condtions[conditionObject] == undefined) {
           condtions[conditionObject] = {
-            action: "undefined-con",
+            action: action,
+            "action-id": objectData[6][conditionObject][1],
             object: obj["name"]
           }
 
@@ -251,8 +284,11 @@ function handleBlock(sheetObject, codeObject) {
           obj = objects[objectData[7][actionObject][0]]
         }
 
+        let action = cmds[objectData[7][actionObject][1]]
+
         if (
-          objectData[7][actionObject][1] == 5) {
+          action == "C3.Plugins.Sprite.Acts.SetInstanceVar"
+        ) {
           actions[actionObject] = {
             action: "set-instvar",
             // var: objectData[7][actionObject][6][0][1],
@@ -263,7 +299,8 @@ function handleBlock(sheetObject, codeObject) {
           }
         }
         else if (
-          objectData[7][actionObject][1] == 6) {
+          action == "C3.Plugins.Sprite.Acts.AddInstanceVar"
+        ) {
 
           actions[actionObject] = {
             action: "add-to-instvar",
@@ -275,7 +312,7 @@ function handleBlock(sheetObject, codeObject) {
           }
         }
         else if (
-          objectData[7][actionObject][1] == 7
+          action == "C3.Plugins.Sprite.Acts.SubInstanceVar"
         ) {
           actions[actionObject] = {
             action: "sub-to-instvar",
@@ -296,10 +333,10 @@ function handleBlock(sheetObject, codeObject) {
           }
         }
 
-        else {
+        else if (actions[actionObject] == undefined) {
 
           actions[actionObject] = {
-            action: "unknown-action",
+            action: action,
             "action-id": objectData[7][actionObject][1],
             object: obj["name"]
           }
@@ -341,6 +378,7 @@ function handleBlock(sheetObject, codeObject) {
           break;
       }
 
+      vars[objectData[6]] = objectData[1]
       return {
         type: "variable",
         name: objectData[1],
